@@ -1,0 +1,50 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Body Map</title>
+<style>
+  html,body{height:100%;margin:0;background:#fff;font-family:system-ui}
+  .wrap{height:100%;display:grid;place-items:center}
+  svg{max-height:90vh}
+  .dot{opacity:.2;transition:opacity .2s ease}
+  .dot.active{opacity:.95}
+  .label{font-size:12px;fill:#334155}
+</style>
+<div class="wrap">
+  <svg viewBox="0 0 120 260" aria-label="Body map">
+    <rect x="0" y="0" width="120" height="260" rx="14" fill="#fff" stroke="#e2e8f0"/>
+    <circle cx="60" cy="35" r="18" fill="#cbd5e1" />
+    <rect x="50" y="53" width="20" height="45" rx="10" fill="#cbd5e1"/>
+    <rect x="40" y="98" width="40" height="70" rx="12" fill="#cbd5e1"/>
+    <rect x="25" y="170" width="25" height="60" rx="8" fill="#cbd5e1"/>
+    <rect x="70" y="170" width="25" height="60" rx="8" fill="#cbd5e1"/>
+    <circle id="g1" class="dot" cx="60" cy="150" r="6" fill="#B22222"/>
+    <text x="72" y="152" class="label">root</text>
+    <circle id="g2" class="dot" cx="60" cy="165" r="6" fill="#FF7F50"/>
+    <text x="72" y="167" class="label">service</text>
+    <circle id="g3" class="dot" cx="60" cy="180" r="6" fill="#F0E68C"/>
+    <text x="72" y="182" class="label">solar</text>
+    <circle id="g4" class="dot" cx="60" cy="135" r="6" fill="#32CD32"/>
+    <text x="72" y="137" class="label">heart</text>
+    <circle id="g5" class="dot" cx="60" cy="115" r="6" fill="#1E90FF"/>
+    <text x="72" y="117" class="label">throat</text>
+    <circle id="g6" class="dot" cx="60" cy="90"  r="6" fill="#8A2BE2"/>
+    <text x="72" y="92" class="label">insight</text>
+    <circle id="g7" class="dot" cx="60" cy="65"  r="6" fill="#DA70D6"/>
+    <text x="72" y="67" class="label">crown</text>
+  </svg>
+</div>
+<script>
+  function focusGate(name){
+    const ids={root:1,service:2,solar:3,heart:4,throat:5,insight:6,crown:7};
+    for(let k in ids){
+      const el=document.getElementById('g'+ids[k]);
+      if(!el) continue;
+      if(k===name){ el.classList.add('active'); }
+      else{ el.classList.remove('active'); }
+    }
+  }
+  window.addEventListener('message', (e)=>{
+    const d=e.data||{}; if(d.type==='focus' && d.gate){ focusGate(d.gate); }
+  });
+</script>

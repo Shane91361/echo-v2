@@ -1,0 +1,86 @@
+{
+  "heart": {
+    "patterns": [
+      "grief|lonely|love|heart|chest"
+    ],
+    "micro": "chest",
+    "rev": [
+      1
+    ],
+    "gen": [
+      1
+    ]
+  },
+  "solar": {
+    "patterns": [
+      "anxious|nervous|stomach|belly|gut|angry"
+    ],
+    "micro": "belly",
+    "rev": [
+      1
+    ],
+    "gen": [
+      1
+    ]
+  },
+  "throat": {
+    "patterns": [
+      "voice|speak|throat|jaw|neck|truth"
+    ],
+    "micro": "throat",
+    "rev": [
+      1
+    ],
+    "gen": [
+      1
+    ]
+  },
+  "root": {
+    "patterns": [
+      "unsafe|afraid|fear|ground|legs|feet"
+    ],
+    "micro": "legs",
+    "rev": [
+      1
+    ],
+    "gen": [
+      1
+    ]
+  },
+  "insight": {
+    "patterns": [
+      "racing thoughts|overthinking|mind|head"
+    ],
+    "micro": "brow",
+    "rev": [
+      1
+    ],
+    "gen": [
+      1
+    ]
+  },
+  "crown": {
+    "patterns": [
+      "meaning|purpose|why|tired of it all"
+    ],
+    "micro": "crown",
+    "rev": [
+      1
+    ],
+    "gen": [
+      1
+    ]
+  },
+  "service": {
+    "patterns": [
+      "shoulders|burden|carrying|serve|helping"
+    ],
+    "micro": "shoulders",
+    "rev": [
+      1
+    ],
+    "gen": [
+      1
+    ]
+  }
+}
