@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Echo — All-in-One (Chat + Body + Scripture) v2</title>
+<style>
+:root{ --ink:#0f172a; --muted:#64748b; --bg:#f8fafc; --card:#ffffff; --ring:#e2e8f0; --brand:#06b6d4; --ok:#16a34a; --err:#dc2626; }
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--ink)}
+.app{display:grid;grid-template-columns:1.1fr .9fr;gap:12px;max-width:1400px;margin:0 auto;padding:12px}
+@media(max-width:980px){ .app{grid-template-columns:1fr;} }
+.card{background:var(--card);border:1px solid var(--ring);border-radius:14px;padding:12px;box-shadow:0 2px 10px rgba(2,8,23,.05)}
+h1{font-size:20px;margin:6px 0 10px}
+.small{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{display:inline-block;background:#eef2ff;color:#3730a3;padding:4px 8px;border-radius:999px;font-size:12px;margin-right:6px}
+
+/* Chat */
+#chat{display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow:auto}
+.msg{display:flex;gap:8px}
+.msg .who{font-weight:600;width:74px;flex:0 0 auto;color:var(--muted)}
+.msg .bubble{flex:1;border:1px solid var(--ring);background:#fff;border-radius:12px;padding:10px}
+.controls{display:flex;gap:6px;align-items:center;margin-top:8px}
+input[type=text]{flex:1;padding:10px;border-radius:10px;border:1px solid var(--ring)}
+button{border:1px solid var(--ring);background:#fff;border-radius:10px;padding:8px 10px;cursor:pointer}
+button.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+select{border:1px solid var(--ring);border-radius:10px;padding:6px}
+
+/* Right panel */
+.rightGrid{display:grid;grid-template-rows:310px auto;gap:8px}
+.bodyWrap{position:relative;min-height:300px}
+.bodyWrap iframe{width:100%;height:100%;border:0;border-radius:12px;border:1px solid var(--ring);background:#fff}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabBtn{padding:6px 10px;border:1px solid var(--ring);border-radius:10px;background:#fff;cursor:pointer}
+.tabBtn.active{background:#111827;color:#fff;border-color:#111827}
+.tabPanel{border:1px solid var(--ring);border-radius:12px;padding:10px;margin-top:8px;background:#fff;min-height:100px}
+
+#status{display:none;margin-bottom:8px;padding:6px 10px;border-left:4px solid var(--brand);background:#ecfeff;border-radius:8px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="card">
+    <h1>Echo — Chat</h1>
+    <div id="status" class="small"></div>
+    <div id="chat" aria-live="polite"></div>
+    <div class="controls">
+      <input id="input" type="text" placeholder="Say anything… (Enter to send)"/>
+      <button id="wikiBtn">📚</button>
+      <button id="micBtn">🎤</button>
+      <button id="speakBtn">🔊</button>
+      <label class="small"><input type="checkbox" id="autoSpeak" checked/> auto-speak</label>
+      <button id="send" class="primary">Send</button>
+    </div>
+    <div class="row small" style="margin-top:6px">
+      <label>Voice:</label><select id="voiceSelect"></select>
+      <label>Lang:</label>
+      <select id="langSelect">
+        <option value="en-US">en-US</option><option value="es-ES">es-ES</option>
+        <option value="zh-CN">zh-CN</option><option value="fr-FR">fr-FR</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="rightGrid">
+    <div class="card bodyWrap">
+      <div class="row" style="justify-content:space-between;margin-bottom:6px">
+        <div><span class="pill" id="gatePill">—</span><span class="small" id="microPill"></span></div>
+        <div class="small">Your original body map</div>
+      </div>
+      <iframe id="bodyFrame" src="body-1224.html" title="Body Map"></iframe>
+    </div>
+
+    <div class="card">
+      <div class="tabs">
+        <button class="tabBtn active" data-tab="why">Why here</button>
+        <button class="tabBtn" data-tab="practice">Practice</button>
+        <button class="tabBtn" data-tab="scripture">Scripture</button>
+        <button class="tabBtn" data-tab="story">Story</button>
+      </div>
+      <div id="why" class="tabPanel">Tell me what’s alive in you. I’ll listen and point the map.</div>
+      <div id="practice" class="tabPanel" hidden>
+        <div id="practiceText">—</div>
+        <button id="speakPractice" style="margin-top:6px">▶ speak</button>
+      </div>
+      <div id="scripture" class="tabPanel" hidden>
+        <div id="scriptHdr" class="small"></div>
+        <div id="scriptText" style="margin-top:6px"></div>
+        <div class="row" style="margin-top:8px">
+          <button id="speakScript">▶ speak</button>
+        </div>
+      </div>
+      <div id="story" class="tabPanel" hidden>
+        <div id="storyText">—</div>
+        <button id="speakStory" style="margin-top:6px">▶ speak</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const chat=$('chat'), inp=$('input'), sendBtn=$('send'), micBtn=$('micBtn'), speakBtn=$('speakBtn');
+const gatePill=$('gatePill'), microPill=$('microPill'), bodyFrame=$('bodyFrame');
+const voiceSelect=$('voiceSelect'), langSelect=$('langSelect'), autoSpeak=$('autoSpeak'), status=$('status');
+const wikiBtn=$('wikiBtn');
+const tabBtns=[...document.querySelectorAll('.tabBtn')], panels={why:$('why'),practice:$('practice'),scripture:$('scripture'),story:$('story')};
+let FEELINGS={};
+
+// Onboarding (name/email) minimal and stored to localStorage (hidden UI)
+(function(){
+  const key='echo_profile';
+  const saved=localStorage.getItem(key);
+  if(!saved){
+    const name=prompt("What should I call you?"); const email=prompt("Email (optional, for later features)"); 
+    localStorage.setItem(key, JSON.stringify({name:name||'friend', email:email||''}));
+  }
+})();
+
+// Status
+function setStatus(msg){ status.textContent=msg; status.style.display='block'; }
+
+// Load mapping
+fetch('assets/mapping/feelings_map.json').then(r=>r.json()).then(j=>{ FEELINGS=j; setStatus('Ready: voices, mic, scripture loader.'); });
+
+// Tabs
+tabBtns.forEach(b=>b.onclick=()=>{ tabBtns.forEach(x=>x.classList.remove('active')); b.classList.add('active'); Object.values(panels).forEach(p=>p.hidden=true); panels[b.dataset.tab].hidden=false; });
+
+function addMsg(who,text,html=false){
+  const row=document.createElement('div'); row.className='msg';
+  const w=document.createElement('div'); w.className='who'; w.textContent=who;
+  const b=document.createElement('div'); b.className='bubble'; b[html?'innerHTML':'textContent']=text;
+  row.appendChild(w); row.appendChild(b); chat.appendChild(row); chat.scrollTop=chat.scrollHeight;
+  if(who==='Echo' && autoSpeak.checked){ speak(b.textContent); }
+}
+
+// Non-repeat variants per gate
+const variants={
+  solar:[
+    "I’m with you. Solar shows up when courage and boundaries need breath.",
+    "Hearing belly signals—agency and peace want your attention.",
+    "Let’s settle the gut and choose the gentle boundary."
+  ],
+  heart:[
+    "I’m here. Heart speaks of love, grief, and connection.",
+    "I feel the weight in the chest—let’s make room for breath and kindness.",
+    "Heart focus—receive, soften, and be held."
+  ],
+  throat:[
+    "Throat is asking for a kind truth.",
+    "Voice wants out—let’s make space for one honest sentence.",
+    "Jaw/neck tells me: we’ll unclench and speak gently."
+  ],
+  root:[
+    "Root first—safety and ground under your feet.",
+    "Let’s steady the legs so the heart can speak.",
+    "Grounding now—feel the floor, slow everything down."
+  ],
+  insight:[
+    "Mind is busy—let’s ask for wisdom and one next step.",
+    "Insight focus—name the thought and let it pass.",
+    "Clarity comes as we breathe and look far."
+  ],
+  crown:[
+    "Crown asks for meaning—Alpha and Omega holds you.",
+    "Let’s widen view: sky, breath, belonging.",
+    "Surrender brings lift—rest your head in Presence."
+  ],
+  service:[
+    "Shoulders carry too much—let’s return what isn’t yours.",
+    "Service with joy, not strain—roll the weight off.",
+    "Hands can serve after we unburden the heart."
+  ]
+};
+const lastUsed={};
+
+function pickVariant(gate){
+  const list=variants[gate]||["I’m with you."];
+  let i=(lastUsed[gate]||-1)+1; if(i>=list.length) i=0;
+  lastUsed[gate]=i; return list[i];
+}
+
+// TTS voices
+let voices=[];
+function loadVoices(){
+  voices=window.speechSynthesis.getVoices();
+  voiceSelect.innerHTML='';
+  voices.forEach((v,i)=>{
+    const opt=document.createElement('option'); opt.value=i; opt.textContent=`${v.name} (${v.lang})`; voiceSelect.appendChild(opt);
+  });
+}
+loadVoices(); window.speechSynthesis.onvoiceschanged=loadVoices;
+
+function speak(text){
+  if(!text) return;
+  const u=new SpeechSynthesisUtterance(text);
+  const v=voices[voiceSelect.value|0]; if(v) u.voice=v;
+  u.lang=langSelect.value|| (v?v.lang:'en-US');
+  window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+}
+speakBtn.onclick=()=>{ const msgs=[...document.querySelectorAll('.msg .bubble')]; for(let i=msgs.length-1;i>=0;i--){ const who=msgs[i].previousElementSibling?.textContent||''; if(who.trim()==='Echo'){ speak(msgs[i].textContent); break; }} };
+
+// Mic (ASR)
+let rec=null, recognizing=false;
+function startASR(){
+  if(!('webkitSpeechRecognition' in window)){ alert('Speech recognition not supported here.'); return; }
+  window.speechSynthesis.cancel();
+  const R=new webkitSpeechRecognition(); R.lang=langSelect.value||'en-US'; R.continuous=true; R.interimResults=true;
+  R.onstart=()=>{ recognizing=true; micBtn.textContent='⏹'; };
+  R.onresult=(e)=>{ let final=''; for(let i=e.resultIndex;i<e.results.length;i++){ const res=e.results[i]; if(res.isFinal){ final+=res[0].transcript; } } if(final){ inp.value=(inp.value+' '+final).trim(); } };
+  R.onend=()=>{ recognizing=false; micBtn.textContent='🎤'; };
+  rec=R; rec.start();
+}
+micBtn.onclick=()=>{ if(recognizing){ rec.stop(); } else { startASR(); } };
+
+// Wikipedia button (opens new tab, avoids file:// CORS)
+wikiBtn.onclick=()=>{
+  const q = encodeURIComponent(inp.value.trim() || 'Emotions body map');
+  window.open(`https://en.wikipedia.org/wiki/Special:Search?search=${q}`,'_blank');
+};
+
+// Routing helpers
+function routeFeelings(text){
+  const t=(text||'').toLowerCase();
+  for(const key in FEELINGS){
+    for(const pat of FEELINGS[key].patterns){
+      try{ const re=new RegExp(pat); if(re.test(t)) return {gate:key, micro:FEELINGS[key].micro, ref:FEELINGS[key]}; }catch{}
+    }
+  }
+  // default
+  return {gate:'heart', micro:'chest', ref:FEELINGS['heart']||{}};
+}
+const practices = {
+  root:["Feel your feet. Inhale 4, exhale 6.","Press toes into floor; say: 'I am safe here.'"],
+  solar:["Hand to belly: 'Inhale courage, exhale people-pleasing.'","Draw one boundary sentence today."],
+  heart:["Hand to heart; 5 slow breaths.","Whisper: 'I receive love.'"],
+  throat:["Hum for 30 seconds.","Say one true sentence kindly."],
+  insight:["Name the thought; let it pass.","Look to the horizon 10 seconds."],
+  crown:["See the sky and breathe 4/4 for 60s.","Whisper: 'Alpha & Omega—hold me.'"],
+  service:["Roll shoulders 10x.","Release what's not yours."]
+};
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+async function loadChapter(path1, path2){
+  // Try path1 first, then path2; return verses text or empty
+  const tryLoad=async(p)=>{ try{ const r=await fetch(p); if(r.ok){ const j=await r.json(); return (j.verses||[]).slice(0,3).join(' '); } }catch(e){} return ''; };
+  const a=await tryLoad(path1); if(a) return a; return await tryLoad(path2);
+}
+
+async function setRight(gate,micro,ref){
+  gatePill.textContent=gate.toUpperCase(); microPill.textContent = micro?('• '+micro):'';
+  panels.why.textContent = `Signals suggest the ${gate} gate (${micro||'center'}).`;
+  const ptxt=(practices[gate]||["Breathe 5 slow breaths."]); $('practiceText').textContent=pick(ptxt);
+  $('speakPractice').onclick=()=>speak($('practiceText').textContent);
+
+  // Scripture: load from either assets/scripture/ or root
+  const revCh = ref && ref.rev ? ref.rev[0] : 1;
+  const genCh = ref && ref.gen ? ref.gen[0] : 1;
+  $('scriptHdr').textContent=`Rev ${revCh} • Gen ${genCh}`;
+  const revTxt = await loadChapter(`assets/scripture/revelation-${revCh}.json`, `revelation-${revCh}.json`);
+  const genTxt = await loadChapter(`assets/scripture/genesis-${genCh}.json`, `genesis-${genCh}.json`);
+  const script = [revTxt, genTxt].filter(Boolean).join(' | ') || "Place your chapter JSONs in either /assets/scripture/ or the same folder.";
+  $('scriptText').textContent = script;
+  $('speakScript').onclick=()=>speak(script);
+
+  // Story: simple gate-based seed (you can replace with your own text file per gate)
+  const stories={
+    solar:"A friend once found courage by saying one boundary kindly. The belly softened as truth met love.",
+    heart:"A widow learned that grief is love with nowhere to go—so she began to let it sing.",
+    throat:"A student wrote one true sentence each night; the jaw loosened, and sleep returned.",
+    root:"When storms came, he touched the ground and remembered: 'I am held.'",
+    insight:"She stepped outside, looked far, and the tangle loosened enough for one next step.",
+    crown:"He stopped striving, lifted his eyes, and felt the Alpha and Omega breathe through him.",
+    service:"She put down what wasn’t hers and found joy in the one task that was."
+  };
+  const sTxt = stories[gate] || "Your story is forming—let’s listen for the next faithful step.";
+  $('storyText').textContent=sTxt;
+  $('speakStory').onclick=()=>speak(sTxt);
+
+  // Tell body page which gate to focus (if it listens)
+  try{ bodyFrame.contentWindow.postMessage({type:'focus', gate}, '*'); }catch(e){}
+}
+
+function send(){
+  const text=inp.value.trim(); if(!text) return; inp.value=''; addMsg('You',text);
+  const {gate,micro,ref}=routeFeelings(text);
+  setRight(gate,micro,ref);
+  const reply = pickVariant(gate);
+  addMsg('Echo', reply);
+}
+sendBtn.onclick=send;
+inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); }});
+</script>
+</body>
+</html>
