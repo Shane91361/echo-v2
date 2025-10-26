@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Echo · Scripture</title>
+<style>
+:root {
+  --bg-main:#0a0d12;
+  --panel-bg:#131821;
+  --panel-alt:#1e2533;
+  --text-main:#ffffff;
+  --text-dim:#94a3b8;
+  --border-dim:rgba(255,255,255,0.07);
+  --accent-glow:rgba(255,255,255,0.45);
+
+  --radius-md:14px;
+  --radius-lg:20px;
+  --pad-md:16px;
+  --pad-lg:20px;
+
+  --font-main:ui-rounded, system-ui, -apple-system, BlinkMacSystemFont,
+   "Inter","SF Pro Text",Roboto,"Segoe UI",sans-serif;
+}
+body{
+  margin:0;
+  background:var(--bg-main);
+  color:var(--text-main);
+  font-family:var(--font-main);
+  min-height:100vh;
+  padding-bottom:80px;
+  display:flex;
+  flex-direction:column;
+}
+
+/* header */
+header.topbar{
+  background:var(--panel-bg);
+  border-bottom:1px solid var(--border-dim);
+  padding:12px var(--pad-md);
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:12px;
+}
+.top-left{line-height:1.2;}
+.app-title{font-size:14px;font-weight:600;color:var(--text-main);}
+.app-sub{font-size:12px;color:var(--text-dim);}
+.top-right{display:flex;flex-wrap:wrap;gap:8px;}
+select{
+  background:var(--panel-alt);
+  color:var(--text-main);
+  border:1px solid var(--border-dim);
+  border-radius:var(--radius-md);
+  padding:6px 10px;
+  font-size:13px;
+}
+
+/* layout */
+main.layout{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  padding:var(--pad-md);
+}
+.left-col,.right-col{display:flex;flex-direction:column;gap:16px;}
+@media(min-width:900px){
+  main.layout{flex-direction:row;align-items:flex-start;}
+  .left-col{flex:0 0 360px;}
+  .right-col{flex:1;}
+}
+
+/* body panel */
+.body-panel{
+  background:var(--panel-bg);
+  border:1px solid var(--border-dim);
+  border-radius:var(--radius-lg);
+  padding:var(--pad-md);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+#bodyCanvasWrapper{
+  width:100%;
+  max-width:320px;
+  min-height:360px;
+  position:relative;
+  border:1px solid var(--border-dim);
+  border-radius:var(--radius-md);
+  overflow:hidden;
+  background:transparent;
+  margin-bottom:12px;
+}
+.body-note{
+  font-size:12px;
+  color:var(--text-dim);
+  line-height:1.4;
+  min-height:2em;
+}
+
+/* codon / tier */
+.codon-card{
+  width:100%;
+  background:var(--panel-alt);
+  border:1px solid var(--border-dim);
+  border-radius:var(--radius-md);
+  padding:12px;
+  font-size:12px;
+  line-height:1.4;
+  color:var(--text-dim);
+}
+.codon-head{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+}
+#codonCode{
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-main);
+}
+#codonMeaning{
+  margin-top:4px;
+  font-size:11px;
+  color:var(--text-dim);
+}
+.tier-pill{
+  font-size:11px;
+  line-height:1.3;
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid var(--border-dim);
+  background:rgba(255,255,255,0.07);
+  color:var(--text-main);
+  white-space:nowrap;
+  margin-left:8px;
+}
+
+/* verse focus card */
+.current-verse-card{
+  background:var(--panel-bg);
+  border:1px solid var(--border-dim);
+  border-radius:var(--radius-lg);
+  padding:var(--pad-lg);
+}
+.cv-head{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:12px;
+}
+.cv-ref{
+  font-size:16px;
+  font-weight:600;
+  color:var(--text-main);
+}
+.scripture-block{
+  font-size:14px;
+  line-height:1.5;
+  color:var(--text-main);
+  margin-bottom:12px;
+}
+.karaoke-part{
+  padding:2px 3px;
+  border-radius:4px;
+  transition:all .2s linear;
+}
+.karaoke-part.active{
+  background:rgba(255,255,255,0.07);
+  box-shadow:0 0 8px var(--accent-glow);
+  color:#fff;
+  font-weight:600;
+}
+
+/* interpretation */
+.voice-card{
+  background:var(--panel-alt);
+  border:1px solid var(--border-dim);
+  border-radius:var(--radius-md);
+  padding:12px;
+  font-size:13px;
+  line-height:1.4;
+  color:var(--text-main);
+  margin-bottom:12px;
+}
+.interpret-line{
+  margin-bottom:10px;
+  padding-left:8px;
+  border-left:3px solid transparent;
+  border-radius:4px;
+}
+.interpret-line.active{
+  background:rgba(255,255,255,0.03);
+  box-shadow:0 0 8px var(--accent-glow);
+}
+.speaker-label{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:2px;
+}
+
+/* verse list */
+.verse-list{
+  background:var(--panel-bg);
+  border:1px solid var(--border-dim);
+  border-radius:var(--radius-lg);
+  padding:var(--pad-md);
+  max-height:260px;
+  overflow-y:auto;
+}
+.verse-row{
+  border:1px solid transparent;
+  border-radius:var(--radius-md);
+  padding:10px 12px;
+  font-size:13px;
+  line-height:1.4;
+  color:var(--text-main);
+  cursor:pointer;
+}
+.verse-row+.verse-row{margin-top:6px;}
+.verse-row.active{
+  border-color:rgba(255,255,255,0.4);
+  background:rgba(255,255,255,0.05);
+  box-shadow:0 0 8px rgba(255,255,255,0.4);
+}
+.row-top{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  line-height:1.3;
+}
+.row-ref{font-weight:600;color:var(--text-main);}
+.row-voice{
+  font-size:10px;
+  line-height:1.2;
+  padding:2px 6px;
+  border-radius:999px;
+  border:1px solid var(--border-dim);
+  background:rgba(255,255,255,0.07);
+  color:var(--text-main);
+  white-space:nowrap;
+  max-width:60%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.row-snippet{
+  font-size:12px;
+  color:var(--text-dim);
+  margin-top:4px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* controls footer */
+.controls-bar{
+  position:fixed;
+  left:0;right:0;bottom:0;
+  background:var(--panel-alt);
+  border-top:1px solid var(--border-dim);
+  padding:10px var(--pad-md);
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.ctrl-left{
+  font-size:11px;
+  line-height:1.2;
+  color:var(--text-dim);
+}
+#nowRef{
+  color:var(--text-main);
+  font-weight:600;
+  font-size:12px;
+}
+#nowTier{
+  color:var(--text-dim);
+  font-size:11px;
+}
+.ctrl-mid{
+  display:flex;
+  flex-direction:row;
+  gap:8px;
+}
+.ctrl-btn{
+  background:#2a3347;
+  color:var(--text-main);
+  border:1px solid var(--border-dim);
+  border-radius:var(--radius-md);
+  font-size:13px;
+  font-weight:600;
+  min-width:48px;
+  min-height:40px;
+  padding:8px 12px;
+}
+.ctrl-right{
+  font-size:11px;
+  line-height:1.2;
+  color:var(--text-dim);
+}
+
+/* dynamic glow zones inside body map */
+.zone-dot{
+  position:absolute;
+  border:2px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.03);
+  border-radius:50%;
+  box-shadow:0 0 0 transparent;
+  transition:all .18s;
+}
+.zone-active{
+  box-shadow:0 0 8px currentColor,0 0 16px currentColor;
+  border-width:2px;
+  background:rgba(255,255,255,0.07);
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="top-left">
+    <div class="app-title">Echo · Scripture</div>
+    <div class="app-sub">Word · Body · Spirit</div>
+  </div>
+  <div class="top-right">
+    <select id="chapterPicker"></select>
+    <select id="versePicker"></select>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- LEFT: BODY MAP / DNA / BODY NOTE -->
+  <section class="left-col">
+
+    <div class="body-panel">
+      <div id="bodyCanvasWrapper">
+        <!-- We'll inject inline SVG body map dynamically (the silhouette + anatomy labels). -->
+        <!-- We'll also inject glow dots for zones here. -->
+      </div>
+
+      <div class="codon-card">
+        <div class="codon-head">DNA / CODON</div>
+        <div id="codonCode">–</div>
+        <div id="codonMeaning"></div>
+      </div>
+
+      <div class="body-note" id="bodyNoteBlock"></div>
+    </div>
+
+  </section>
+
+  <!-- RIGHT: CURRENT VERSE / EXPLANATION / VERSE LIST -->
+  <section class="right-col">
+
+    <div class="current-verse-card">
+      <div class="cv-head">
+        <div class="cv-ref" id="focusRef">–</div>
+        <div class="tier-pill" id="tierPill">Tier –</div>
+      </div>
+
+      <div class="scripture-block" id="scriptureBlock">
+        <!-- karaoke scripture -->
+      </div>
+
+      <div class="voice-card" id="interpretBlock">
+        <!-- speaker voices (Father / Spirit / Might / Fruit etc.) -->
+      </div>
+    </div>
+
+    <div class="verse-list" id="verseList"></div>
+
+  </section>
+
+</main>
+
+<footer class="controls-bar">
+  <div class="ctrl-left">
+    <div id="nowRef">–</div>
+    <div id="nowTier">–</div>
+  </div>
+
+  <div class="ctrl-mid">
+    <button class="ctrl-btn" id="prevBtn">◀</button>
+    <button class="ctrl-btn" id="playBtn">►</button>
+    <button class="ctrl-btn" id="nextBtn">▶</button>
+  </div>
+
+  <div class="ctrl-right">
+    <div id="phaseStatus">Ready</div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   DATA + COLOR
+============================================================ */
+const COLOR_MAP={
+ "father":"#f5d565",
+ "son":"#ff6b6b",
+ "spirit":"#8fd3ff",
+ "might":"#ff8a3c",
+ "fruit":"#f472b6",
+ "scripture":"#94a3b8",
+ "chest":"#ff6b6b",
+ "nervous":"#8fd3ff",
+ "ground":"#6ee7b7"
+};
+
+let speakersData={};   // from speakers.json
+let tiersData=[];      // from tiers.json
+let chapterVerses=[];  // active chapter data
+let currentVerseIndex=0;
+
+let playing=false;
+let phase="idle"; // "scripture" or "interpret"
+let segIndex=0;
+let lineIndex=0;
+let autoplayTimer=null;
+
+/* ============================================================
+   DOM HOOKS
+============================================================ */
+const chapterPicker=document.getElementById('chapterPicker');
+const versePicker=document.getElementById('versePicker');
+
+const bodyCanvasWrapper=document.getElementById('bodyCanvasWrapper');
+const codonCodeEl=document.getElementById('codonCode');
+const codonMeaningEl=document.getElementById('codonMeaning');
+const bodyNoteBlock=document.getElementById('bodyNoteBlock');
+
+const focusRefEl=document.getElementById('focusRef');
+const tierPillEl=document.getElementById('tierPill');
+const scriptureBlockEl=document.getElementById('scriptureBlock');
+const interpretBlockEl=document.getElementById('interpretBlock');
+const verseListEl=document.getElementById('verseList');
+
+const nowRefEl=document.getElementById('nowRef');
+const nowTierEl=document.getElementById('nowTier');
+const phaseStatusEl=document.getElementById('phaseStatus');
+
+const prevBtn=document.getElementById('prevBtn');
+const playBtn=document.getElementById('playBtn');
+const nextBtn=document.getElementById('nextBtn');
+
+/* ============================================================
+   BODY MAP RENDER (SILHOUETTE + ZONES)
+   NOTE: this is simplified inline replica of your v1.8 style:
+   - outline body
+   - aura field
+   - stacked core points
+   We'll also overlay "zone-dot" divs with absolute coords.
+============================================================ */
+function renderBodyBaseOnce(){
+  // If already rendered, skip
+  if(bodyCanvasWrapper.querySelector('svg')) return;
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("viewBox","0 0 300 700");
+  svg.setAttribute("width","100%");
+  svg.setAttribute("height","auto");
+  svg.style.display="block";
+
+  // body outline like your silhouette
+  const bodyPath=document.createElementNS("http://www.w3.org/2000/svg","path");
+  bodyPath.setAttribute("d",
+    "M150 40 C140 40 125 52 125 70 L125 120 C125 135 115 160 115 185 L115 300 C115 330 100 360 100 400 L100 520 C100 560 110 600 110 630 L110 660 C110 680 125 690 150 690 C175 690 190 680 190 660 L190 630 C190 600 200 560 200 520 L200 400 C200 360 185 330 185 300 L185 185 C185 160 175 135 175 120 L175 70 C175 52 160 40 150 40 Z");
+  bodyPath.setAttribute("stroke","rgba(255,255,255,0.35)");
+  bodyPath.setAttribute("stroke-width","2.5");
+  bodyPath.setAttribute("fill","rgba(255,255,255,0.02)");
+
+  // aura ellipse
+  const aura=document.createElementNS("http://www.w3.org/2000/svg","ellipse");
+  aura.setAttribute("cx","150");
+  aura.setAttribute("cy","360");
+  aura.setAttribute("rx","115");
+  aura.setAttribute("ry","250");
+  aura.setAttribute("stroke","rgba(255,255,255,0.18)");
+  aura.setAttribute("stroke-width","2");
+  aura.setAttribute("fill","rgba(255,255,255,0.01)");
+
+  // spine line
+  const spine=document.createElementNS("http://www.w3.org/2000/svg","rect");
+  spine.setAttribute("x","146");
+  spine.setAttribute("y","80");
+  spine.setAttribute("width","8");
+  spine.setAttribute("height","500");
+  spine.setAttribute("rx","4");
+  spine.setAttribute("stroke","rgba(255,255,255,0.35)");
+  spine.setAttribute("stroke-width","1.5");
+  spine.setAttribute("fill","rgba(255,255,255,0.02)");
+
+  // stacked core nodes
+  function circle(cx,cy,r){
+    const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    c.setAttribute("cx",cx);
+    c.setAttribute("cy",cy);
+    c.setAttribute("r",r);
+    c.setAttribute("stroke","rgba(255,255,255,0.35)");
+    c.setAttribute("stroke-width","1.5");
+    c.setAttribute("fill","rgba(255,255,255,0.02)");
+    return c;
+  }
+  function rect(x,y,w,h,rx){
+    const r=document.createElementNS("http://www.w3.org/2000/svg","rect");
+    r.setAttribute("x",x);
+    r.setAttribute("y",y);
+    r.setAttribute("width",w);
+    r.setAttribute("height",h);
+    r.setAttribute("rx",rx);
+    r.setAttribute("stroke","rgba(255,255,255,0.35)");
+    r.setAttribute("stroke-width","1.5");
+    r.setAttribute("fill","rgba(255,255,255,0.02)");
+    return r;
+  }
+  function ellipse(cx,cy,rx,ry){
+    const e=document.createElementNS("http://www.w3.org/2000/svg","ellipse");
+    e.setAttribute("cx",cx);
+    e.setAttribute("cy",cy);
+    e.setAttribute("rx",rx);
+    e.setAttribute("ry",ry);
+    e.setAttribute("stroke","rgba(255,255,255,0.35)");
+    e.setAttribute("stroke-width","1.5");
+    e.setAttribute("fill","rgba(255,255,255,0.02)");
+    return e;
+  }
+
+  const nodes=[
+    circle(150,70,22),
+    circle(150,110,10),
+    rect(138,125,24,20,5),
+    rect(115,170,70,28,8),
+    circle(150,215,28),
+    ellipse(150,260,40,28),
+    rect(128,305,44,28,8),
+    circle(150,355,26),
+    ellipse(150,400,38,26),
+    ellipse(150,445,32,22),
+    ellipse(150,485,28,20),
+    rect(130,520,40,40,10),
+    circle(150,575,10),
+    circle(150,620,28),
+    ellipse(150,670,45,20)
+  ];
+
+  svg.appendChild(aura);
+  svg.appendChild(bodyPath);
+  svg.appendChild(spine);
+  nodes.forEach(n=>svg.appendChild(n));
+
+  bodyCanvasWrapper.appendChild(svg);
+
+  // Create glow zones (absolute overlay divs). We'll match approximate pixel coords
+  // We'll tune these coordinates by eye for phone scale.
+  const zones=[
+    {id:"Head", left:"calc(50% - 12px)", top:"20px", w:"24px", h:"24px", r:"12px"},
+    {id:"Chest", left:"calc(50% - 20px)", top:"190px", w:"40px", h:"40px", r:"20px"},
+    {id:"Diaphragm", left:"calc(50% - 28px)", top:"240px", w:"56px", h:"28px", r:"14px"},
+    {id:"Gut", left:"calc(50% - 34px)", top:"300px", w:"68px", h:"40px", r:"20px"},
+    {id:"Spine", left:"calc(50% - 6px)", top:"120px", w:"12px", h:"260px", r:"6px"},
+    {id:"Knees", left:"calc(50% - 22px)", top:"600px", w:"44px", h:"44px", r:"22px"},
+    {id:"Feet", left:"calc(50% - 45px)", top:"650px", w:"90px", h:"30px", r:"20px"},
+    {id:"Field", left:"calc(50% - 75px)", top:"140px", w:"150px", h:"320px", r:"80px"}
+  ];
+  zones.forEach(z=>{
+    const d=document.createElement('div');
+    d.className="zone-dot";
+    d.id="zone-"+z.id;
+    d.style.left=z.left;
+    d.style.top=z.top;
+    d.style.width=z.w;
+    d.style.height=z.h;
+    d.style.borderRadius=z.r;
+    bodyCanvasWrapper.appendChild(d);
+  });
+}
+
+/* highlight zones */
+function clearAllZones(){
+  const dots=bodyCanvasWrapper.querySelectorAll('.zone-dot');
+  dots.forEach(dot=>{
+    dot.classList.remove('zone-active');
+    dot.style.color="";
+    dot.style.borderColor="rgba(255,255,255,0.18)";
+    dot.style.boxShadow="0 0 0 transparent";
+  });
+}
+function glowZones(zoneNames,colorKey){
+  const c=COLOR_MAP[colorKey]||"#ffffff";
+  zoneNames.forEach(zName=>{
+    const el=document.getElementById("zone-"+zName);
+    if(!el)return;
+    el.classList.add('zone-active');
+    el.style.color=c;
+    el.style.borderColor=c;
+    el.style.boxShadow=`0 0 8px ${c},0 0 16px ${c}`;
+  });
+}
+
+/* ============================================================
+   RENDER HELPERS
+============================================================ */
+function tierInfo(num){
+  return tiersData.find(t=>t.tier===num)||null;
+}
+
+function renderScriptureKaraoke(v,activeSeg){
+  scriptureBlockEl.innerHTML="";
+  if(v.segments && v.segments.length){
+    v.segments.forEach((seg,i)=>{
+      const span=document.createElement('span');
+      span.className="karaoke-part"+(i===activeSeg?" active":"");
+      span.textContent=seg.phrase+(i<v.segments.length-1?" ":"");
+      if(i===activeSeg){
+        const cc=COLOR_MAP[seg.color]||"#fff";
+        span.style.color=cc;
+        span.style.boxShadow=`0 0 8px ${cc}`;
+      }
+      scriptureBlockEl.appendChild(span);
+    });
+  }else{
+    // fallback single block of text
+    const span=document.createElement('span');
+    span.className="karaoke-part active";
+    span.textContent=v.text||"[missing scripture text]";
+    scriptureBlockEl.appendChild(span);
+  }
+}
+
+function renderInterpret(v,activeLine){
+  interpretBlockEl.innerHTML="";
+  if(!v.spoken_lines || !v.spoken_lines.length){
+    interpretBlockEl.innerHTML="<div style='font-size:12px;color:#94a3b8;'>No interpretation lines.</div>";
+    return;
+  }
+  v.spoken_lines.forEach((ln,i)=>{
+    const div=document.createElement('div');
+    div.className="interpret-line"+(i===activeLine?" active":"");
+    const c=COLOR_MAP[ln.color]||"#fff";
+    div.style.borderLeftColor=c;
+    if(i===activeLine){
+      div.style.boxShadow=`0 0 8px ${c}`;
+      div.style.background="rgba(255,255,255,0.05)";
+    }
+    const who=(speakersData[ln.speaker] && speakersData[ln.speaker].label)
+      ? speakersData[ln.speaker].label
+      : ln.speaker;
+    const voiceName=ln.voice_id?(" · "+ln.voice_id):"";
+    div.innerHTML=
+      "<div class='speaker-label'>"+who+voiceName+"</div>"+
+      "<div>"+ln.line+"</div>";
+    interpretBlockEl.appendChild(div);
+  });
+}
+
+function renderBodyNote(v){
+  bodyNoteBlock.textContent=v.body_note||"";
+}
+
+function renderCodon(v){
+  if(v.codon){
+    codonCodeEl.textContent = v.codon.code || "–";
+    codonMeaningEl.textContent = v.codon.meaning || "";
+  }else{
+    codonCodeEl.textContent = "–";
+    codonMeaningEl.textContent = "";
+  }
+}
+
+function renderVerseHeader(v){
+  focusRefEl.textContent = v.book+" "+v.chapter+":"+v.verse;
+  const info=tierInfo(v.tier);
+  tierPillEl.textContent = info
+    ? ("Tier "+v.tier+" · "+info.label)
+    : ("Tier "+v.tier);
+}
+
+function renderNowFooter(v){
+  nowRefEl.textContent = v.book+" "+v.chapter+":"+v.verse+" / "+chapterVerses.length;
+  const info=tierInfo(v.tier);
+  nowTierEl.textContent= info
+    ? ("Tier "+v.tier+" · "+info.label)
+    : ("Tier "+v.tier);
+}
+
+function renderVerseList(){
+  verseListEl.innerHTML="";
+  chapterVerses.forEach((v,i)=>{
+    const row=document.createElement('div');
+    row.className="verse-row"+(i===currentVerseIndex?" active":"");
+    row.onclick=()=>{
+      stopAutoplay();
+      goToVerse(i,true);
+    };
+    const voicesLabel=(v.voice||[]).map(id=>{
+      return (speakersData[id] && speakersData[id].label) ? speakersData[id].label : id;
+    }).join(" + ");
+    row.innerHTML=
+      "<div class='row-top'>"+
+        "<div class='row-ref'>"+v.book+" "+v.chapter+":"+v.verse+"</div>"+
+        "<div class='row-voice'>"+voicesLabel+"</div>"+
+      "</div>"+
+      "<div class='row-snippet'>"+(v.text||"")+"</div>";
+    verseListEl.appendChild(row);
+  });
+}
+
+function activateScriptureSeg(v,segI){
+  clearAllZones();
+  if(!v.segments || !v.segments[segI]) return;
+  const seg=v.segments[segI];
+  glowZones(seg.zones||[], seg.color||"scripture");
+}
+
+function activateInterpretLine(v,lineI){
+  clearAllZones();
+  if(!v.spoken_lines || !v.spoken_lines[lineI]) return;
+  const ln=v.spoken_lines[lineI];
+  glowZones(ln.zones||[], ln.color||"spirit");
+}
+
+function renderEverything(pausedPhase,segI,lineI){
+  const v=chapterVerses[currentVerseIndex] || {};
+  renderBodyBaseOnce();
+  renderVerseHeader(v);
+  renderNowFooter(v);
+  renderCodon(v);
+  renderBodyNote(v);
+
+  if(pausedPhase==="interpret"){
+    renderScriptureKaraoke(v,-1);
+    renderInterpret(v,lineI);
+    activateInterpretLine(v,lineI);
+  }else{ // scripture
+    renderScriptureKaraoke(v,segI);
+    renderInterpret(v,-1);
+    activateScriptureSeg(v,segI);
+  }
+
+  renderVerseList();
+}
+
+/* ============================================================
+   AUTOPLAY
+============================================================ */
+function stopAutoplay(){
+  playing=false;
+  phase="idle";
+  segIndex=0;
+  lineIndex=0;
+  clearTimeout(autoplayTimer);
+  autoplayTimer=null;
+  playBtn.textContent="►";
+  phaseStatusEl.textContent="Stopped";
+  renderEverything("scripture",0,0);
+}
+
+function nextVerseInternal(){
+  currentVerseIndex++;
+  if(currentVerseIndex>=chapterVerses.length){
+    currentVerseIndex=chapterVerses.length-1;
+    stopAutoplay();
+    return;
+  }
+  segIndex=0;
+  lineIndex=0;
+  phase="scripture";
+}
+
+function runAutoplayStep(){
+  if(!playing) return;
+
+  const v=chapterVerses[currentVerseIndex];
+  const segCount=(v.segments||[]).length;
+  const lineCount=(v.spoken_lines||[]).length;
+
+  if(phase==="scripture"){
+    renderScriptureKaraoke(v,segIndex);
+    renderInterpret(v,-1);
+    activateScriptureSeg(v,segIndex);
+    renderVerseHeader(v);
+    renderNowFooter(v);
+    renderCodon(v);
+    renderBodyNote(v);
+    phaseStatusEl.textContent="Scripture";
+
+    segIndex++;
+    if(segIndex>=segCount){
+      phase="interpret";
+      lineIndex=0;
+    }
+    autoplayTimer=setTimeout(runAutoplayStep,2000);
+    return;
+  }
+
+  if(phase==="interpret"){
+    renderScriptureKaraoke(v,-1);
+    renderInterpret(v,lineIndex);
+    activateInterpretLine(v,lineIndex);
+    renderVerseHeader(v);
+    renderNowFooter(v);
+    renderCodon(v);
+    renderBodyNote(v);
+    phaseStatusEl.textContent="Interpretation";
+
+    lineIndex++;
+    if(lineIndex>=lineCount){
+      nextVerseInternal();
+    }
+    autoplayTimer=setTimeout(runAutoplayStep,2500);
+    return;
+  }
+}
+
+/* ============================================================
+   NAV / BUTTON HANDLERS
+============================================================ */
+function goToVerse(i,resetPhase){
+  currentVerseIndex=Math.max(0,Math.min(i,chapterVerses.length-1));
+  if(resetPhase){
+    phase="idle";
+    segIndex=0;
+    lineIndex=0;
+  }
+  stopAutoplay();
+  renderEverything("scripture",0,0);
+}
+
+prevBtn.addEventListener("click",()=>{
+  const i=currentVerseIndex-1;
+  if(i>=0) goToVerse(i,true);
+});
+nextBtn.addEventListener("click",()=>{
+  const i=currentVerseIndex+1;
+  if(i<chapterVerses.length) goToVerse(i,true);
+});
+playBtn.addEventListener("click",()=>{
+  if(playing){
+    stopAutoplay();
+    return;
+  }
+  playing=true;
+  playBtn.textContent="⏹";
+  phase="scripture";
+  segIndex=0;
+  lineIndex=0;
+  runAutoplayStep();
+});
+
+/* ============================================================
+   LOADING DATA
+============================================================ */
+async function loadJSON(path){
+  const res=await fetch(path);
+  if(!res.ok){
+    console.warn("Failed fetch",path,res.status);
+    return [];
+  }
+  return res.json();
+}
+
+// build the chapterPicker options
+// You can edit this list to expose more chapters you have locally.
+const CHAPTER_SOURCES=[
+  {label:"Psalm 23", file:"psalm-23.map.json"},
+  {label:"Psalm 9", file:"psalm-9.map.json"},
+  {label:"John 14", file:"john-14.map.json"},
+  // examples using your local Genesis/Revelation chapters:
+  {label:"Genesis 1", file:"genesis-1.json"},
+  {label:"Genesis 2", file:"genesis-2.json"},
+  {label:"Revelation 1", file:"revelation-1.json"},
+  {label:"Revelation 22", file:"revelation-22.json"}
+];
+
+async function pickChapterByIndex(idx){
+  const item=CHAPTER_SOURCES[idx];
+  if(!item) return;
+  const fileName=item.file;
+  const raw=await loadJSON("./data/"+fileName);
+
+  // some of our special *.map.json are arrays of verse objects already
+  // some chapter JSONs might have {verses:[...]}
+  let verses;
+  if(Array.isArray(raw)){
+    verses=raw;
+  }else if(raw && Array.isArray(raw.verses)){
+    verses=raw.verses;
+  }else{
+    verses=[];
+  }
+
+  // if any verse.text is missing, leave placeholder
+  verses.forEach(v=>{
+    if(!v.text||!v.text.trim()) {
+      v.text="[missing scripture text]";
+    }
+  });
+
+  chapterVerses=verses;
+  currentVerseIndex=0;
+  buildVersePicker();
+  renderEverything("scripture",0,0);
+  phaseStatusEl.textContent="Ready";
+}
+
+// fill the dropdowns
+function buildChapterPicker(){
+  chapterPicker.innerHTML="";
+  CHAPTER_SOURCES.forEach((item,i)=>{
+    const opt=document.createElement("option");
+    opt.value=i;
+    opt.textContent=item.label;
+    chapterPicker.appendChild(opt);
+  });
+  chapterPicker.value="0";
+}
+function buildVersePicker(){
+  versePicker.innerHTML="";
+  chapterVerses.forEach((v,i)=>{
+    const opt=document.createElement("option");
+    opt.value=i;
+    opt.textContent=v.chapter+":"+v.verse;
+    versePicker.appendChild(opt);
+  });
+  versePicker.value="0";
+}
+
+/* when user picks a different chapter */
+chapterPicker.addEventListener("change", async ()=>{
+  stopAutoplay();
+  const idx=parseInt(chapterPicker.value,10);
+  await pickChapterByIndex(idx);
+});
+
+/* when user picks a different verse */
+versePicker.addEventListener("change", ()=>{
+  stopAutoplay();
+  const idx=parseInt(versePicker.value,10);
+  goToVerse(idx,true);
+});
+
+/* ============================================================
+   INIT
+============================================================ */
+async function init(){
+  // load speakers + tiers first
+  speakersData = {};
+  const sp=await loadJSON("./data/speakers.json");
+  if(Array.isArray(sp)){
+    sp.forEach(s=>{speakersData[s.id]=s;});
+  }
+  tiersData = await loadJSON("./data/tiers.json");
+
+  renderBodyBaseOnce();
+  buildChapterPicker();
+  await pickChapterByIndex(0);
+}
+init();
+</script>
+
+</body>
+</html>
