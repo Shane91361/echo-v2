@@ -1,0 +1,11 @@
+{
+  "dna": "v1 • Genesis 1",
+  "jesus_explains": "",
+  "map": [
+    { "find": ["heaven","heavens"], "points": ["crown"] },
+    { "find": ["earth","ground","land"], "points": ["foot"] },
+    { "find": ["spirit","breath"], "points": ["solar"] },
+    { "find": ["light"], "points": ["crown","eye"] },
+    { "find": ["waters","sea"], "points": ["gut"] }
+  ]
+}

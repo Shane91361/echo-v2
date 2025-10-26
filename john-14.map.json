@@ -1,0 +1,98 @@
+[
+  {
+    "book": "John",
+    "chapter": 14,
+    "verse": 1,
+    "text": "Let not your heart be troubled. Believe in God; believe also in Me.",
+    "segments": [
+      {
+        "phrase": "Let not your heart be troubled",
+        "color": "son",
+        "zones": [
+          "Chest",
+          "Diaphragm"
+        ]
+      },
+      {
+        "phrase": "Believe in God; believe also in Me",
+        "color": "father",
+        "zones": [
+          "Spine",
+          "Field"
+        ]
+      }
+    ],
+    "spoken_lines": [
+      {
+        "speaker": "son",
+        "voice_id": "GentleMale",
+        "color": "son",
+        "line": "I see your chest shaking. I'm speaking directly to that shaking. Breathe."
+      },
+      {
+        "speaker": "father",
+        "voice_id": "WarmMale",
+        "color": "father",
+        "line": "Lean your fear against Me, not against yourself. You don't have to self-parent this moment."
+      }
+    ],
+    "voice": [
+      "son",
+      "father"
+    ],
+    "tier": 16,
+    "codon": {
+      "code": "AAG",
+      "meaning": "You are not abandoned"
+    },
+    "body_note": "Heart and diaphragm want to clench in panic. He names that directly and calls safety over it."
+  },
+  {
+    "book": "John",
+    "chapter": 14,
+    "verse": 2,
+    "text": "In My Father's house are many rooms... I go to prepare a place for you.",
+    "segments": [
+      {
+        "phrase": "In My Father's house are many rooms",
+        "color": "father",
+        "zones": [
+          "Field",
+          "Spine"
+        ]
+      },
+      {
+        "phrase": "I go to prepare a place for you",
+        "color": "son",
+        "zones": [
+          "Feet",
+          "Knees"
+        ]
+      }
+    ],
+    "spoken_lines": [
+      {
+        "speaker": "father",
+        "voice_id": "WarmMale",
+        "color": "father",
+        "line": "You are wanted. There is literal space with your name on it."
+      },
+      {
+        "speaker": "son",
+        "voice_id": "GentleMale",
+        "color": "son",
+        "line": "Your legs don't have to keep searching for belonging. You're not homeless in the Spirit."
+      }
+    ],
+    "voice": [
+      "father",
+      "son"
+    ],
+    "tier": 17,
+    "codon": {
+      "code": "CCC",
+      "meaning": "Belonging / Home / Attachment secured"
+    },
+    "body_note": "Knees and feet stop wandering for approval because 'place' is already promised."
+  }
+]

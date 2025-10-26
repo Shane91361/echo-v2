@@ -1,0 +1,41 @@
+{
+  "terms": {
+    "saint":   {"body": "the seven governing spirits that distribute Grace/Mercy by instructing your emotions"},
+    "saints":  {"body": "the seven governing spirits that distribute Grace/Mercy by instructing your emotions"},
+    "tribe":   {"body": "the emotions within those seven governing spirits"},
+    "tribes":  {"body": "the emotions within those seven governing spirits"},
+
+    "authority": {"body": "God in you (gift)"},
+    "mouth":     {"body": "expression gate"},
+    "tongue":    {"body": "speech impulse"},
+    "heart":     {"body": "pulse seat (love center)"},
+    "hand":      {"body": "doing"},
+    "head":      {"body": "governing mind"},
+    "feet":      {"body": "walk/ways"},
+
+    "heaven": {"body": "inner unseen"},
+    "earth":  {"body": "form/body"},
+    "sea":    {"body": "mass feelings"},
+    "star":   {"body": "guiding light/message"},
+    "stars":  {"body": "guiding lights/messages"},
+
+    "dragon":  {"body": "accuser impulse"},
+    "beast":   {"body": "runaway impulse"},
+    "serpent": {"body": "twisting thought"},
+    "horse":   {"body": "driving energy"},
+    "lamb":    {"body": "innocent heart"},
+    "dog":     {"body": "mercy-loyalty"},
+
+    "altar":   {"body": "decision point"},
+    "temple":  {"body": "your body (dwelling)"},
+    "crown":   {"body": "completion / crown"},
+    "sword":   {"body": "cutting word"},
+    "trumpet": {"body": "emotional spike"},
+    "water":   {"body": "flowing word/refresh"},
+    "fire":    {"body": "purging zeal"},
+    "cloud":   {"body": "hidden/covered"},
+    "mountain":{"body": "high feeling"},
+    "valley":  {"body": "low feeling"},
+    "wilderness":{"body":"dry stretch"}
+  }
+}

@@ -1,0 +1,100 @@
+[
+  {
+    "book": "Psalm",
+    "chapter": 23,
+    "verse": 1,
+    "text": "The LORD is my shepherd; I shall not want.",
+    "segments": [
+      {
+        "phrase": "The LORD is my shepherd",
+        "color": "father",
+        "zones": [
+          "Chest",
+          "Spine",
+          "Field"
+        ]
+      },
+      {
+        "phrase": "I shall not want",
+        "color": "fruit",
+        "zones": [
+          "Chest",
+          "Diaphragm"
+        ]
+      }
+    ],
+    "spoken_lines": [
+      {
+        "speaker": "father",
+        "voice_id": "WarmMale",
+        "color": "father",
+        "line": "I am here and I am responsible for you. You are not unguarded. You are not alone in the dark."
+      },
+      {
+        "speaker": "spirit",
+        "voice_id": "BreathSoft",
+        "color": "spirit",
+        "line": "Let your chest drop. Breathe out. You don't have to brace for losing everything anymore."
+      }
+    ],
+    "voice": [
+      "father",
+      "spirit"
+    ],
+    "tier": 10,
+    "codon": {
+      "code": "AGT",
+      "meaning": "Safe provision / calm nervous system"
+    },
+    "body_note": "Chest and diaphragm soften from survival tension. Spine no longer hyper-alert. You are being kept, not hunted."
+  },
+  {
+    "book": "Psalm",
+    "chapter": 23,
+    "verse": 2,
+    "text": "He makes me lie down in green pastures. He leads me beside still waters.",
+    "segments": [
+      {
+        "phrase": "He makes me lie down in green pastures",
+        "color": "spirit",
+        "zones": [
+          "Spine",
+          "Knees",
+          "Feet"
+        ]
+      },
+      {
+        "phrase": "He leads me beside still waters",
+        "color": "fruit",
+        "zones": [
+          "Field",
+          "Chest"
+        ]
+      }
+    ],
+    "spoken_lines": [
+      {
+        "speaker": "spirit",
+        "voice_id": "BreathSoft",
+        "color": "spirit",
+        "line": "It's safe to unclench your legs. You don't have to run right now."
+      },
+      {
+        "speaker": "fruit",
+        "voice_id": "Comfort",
+        "color": "fruit",
+        "line": "Peace is not laziness. Peace is medicine. Receive it."
+      }
+    ],
+    "voice": [
+      "spirit",
+      "fruit"
+    ],
+    "tier": 11,
+    "codon": {
+      "code": "TTC",
+      "meaning": "Rest allowed / body allowed to recover"
+    },
+    "body_note": "Knees and feet stop prepping to flee. The field around you says 'not in danger'."
+  }
+]

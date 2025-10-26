@@ -1,0 +1,98 @@
+[
+  {
+    "book": "Psalm",
+    "chapter": 9,
+    "verse": 1,
+    "text": "I will praise you, O LORD, with my whole heart; I will tell of all Your marvelous works.",
+    "segments": [
+      {
+        "phrase": "I will praise you, O LORD, with my whole heart",
+        "color": "father",
+        "zones": [
+          "Chest",
+          "Diaphragm"
+        ]
+      },
+      {
+        "phrase": "I will tell of all Your marvelous works",
+        "color": "spirit",
+        "zones": [
+          "Spine",
+          "Field"
+        ]
+      }
+    ],
+    "spoken_lines": [
+      {
+        "speaker": "son",
+        "voice_id": "GentleMale",
+        "color": "son",
+        "line": "When you remember what I've already done, fear loses its grip on your ribs."
+      },
+      {
+        "speaker": "spirit",
+        "voice_id": "BreathSoft",
+        "color": "spirit",
+        "line": "Testimony calms the nervous system. Gratitude is not fake \u2014 it's regulation."
+      }
+    ],
+    "voice": [
+      "son",
+      "spirit"
+    ],
+    "tier": 13,
+    "codon": {
+      "code": "CGA",
+      "meaning": "Remembrance / anchored identity"
+    },
+    "body_note": "Heart + diaphragm open instead of holding panic. Spine straightens in confidence instead of curling in shame."
+  },
+  {
+    "book": "Psalm",
+    "chapter": 9,
+    "verse": 2,
+    "text": "I will be glad and rejoice in You; I will sing praise to Your name, O Most High.",
+    "segments": [
+      {
+        "phrase": "I will be glad and rejoice in You",
+        "color": "fruit",
+        "zones": [
+          "Chest",
+          "Field"
+        ]
+      },
+      {
+        "phrase": "I will sing praise to Your name, O Most High",
+        "color": "might",
+        "zones": [
+          "Spine",
+          "Feet"
+        ]
+      }
+    ],
+    "spoken_lines": [
+      {
+        "speaker": "fruit",
+        "voice_id": "Comfort",
+        "color": "fruit",
+        "line": "Joy is not pretending. Joy is letting light back into the chest."
+      },
+      {
+        "speaker": "might",
+        "voice_id": "Command",
+        "color": "might",
+        "line": "Stand planted. You are not prey. You belong to the Most High."
+      }
+    ],
+    "voice": [
+      "fruit",
+      "might"
+    ],
+    "tier": 14,
+    "codon": {
+      "code": "GTT",
+      "meaning": "Stability / planted / courage returns"
+    },
+    "body_note": "Feet and stance come back under you. Your body remembers 'I live under Someone bigger than my threat'."
+  }
+]

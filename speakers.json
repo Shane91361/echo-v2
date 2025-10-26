@@ -1,0 +1,32 @@
+[
+  {
+    "id": "father",
+    "label": "Father",
+    "voice_id": "WarmMale",
+    "color": "father"
+  },
+  {
+    "id": "son",
+    "label": "Jesus / Son",
+    "voice_id": "GentleMale",
+    "color": "son"
+  },
+  {
+    "id": "spirit",
+    "label": "Holy Spirit",
+    "voice_id": "BreathSoft",
+    "color": "spirit"
+  },
+  {
+    "id": "might",
+    "label": "Spirit of Might",
+    "voice_id": "Command",
+    "color": "might"
+  },
+  {
+    "id": "fruit",
+    "label": "Fruit of the Spirit",
+    "voice_id": "Comfort",
+    "color": "fruit"
+  }
+]

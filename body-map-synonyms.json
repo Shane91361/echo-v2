@@ -1,0 +1,18 @@
+{
+  "saints": ["holy ones"],
+  "tribes": ["clans"],
+  "people": ["men", "mankind", "peoples"],
+  "nation": ["nations", "kingdoms"],
+  "language": ["languages", "tongues"],
+  "mouth": ["lips"],
+  "sword": ["blade"],
+  "trumpet": ["horn"],
+  "dragon": ["great dragon"],
+  "beast": ["wild beast"],
+  "serpent": ["snake"],
+  "horse": ["horses"],
+  "crown": ["diadem", "diadems"],
+  "lampstand": ["candlestick"],
+  "altar": ["altar"],
+  "temple": ["sanctuary"]
+}

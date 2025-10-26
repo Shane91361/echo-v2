@@ -1,0 +1,24 @@
+{
+  "templates": {
+    "intro": [
+      "This reveals how the body moves now: {main}.",
+      "See the living body: {main}.",
+      "Listen to the inner regulation: {main}."
+    ],
+    "combine": [
+      "{a}, and {b}.",
+      "{a}; {b}.",
+      "{a}. {b}."
+    ],
+    "close": [
+      "Hold steady in breath and let the pulse lead.",
+      "Stay aligned; the body knows what to do.",
+      "Let the breath clear and the heart set rhythm."
+    ]
+  },
+  "style": {
+    "present_tense": true,
+    "merge_short_sentences": true,
+    "max_clause_len": 140
+  }
+}
